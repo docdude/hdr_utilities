@@ -32,29 +32,29 @@ static const DisplayChromacities DisplayChromacityList[] =
 int usage(const char* name)
 {
 	printf("%s  \n", name);
-	printf("      %s <eotf> <hdr_primaries> <Max Fall> <Max Cll> <Max luma> <Min luma>\n", name);
+	printf("      %s <eotf> <hdr_primaries> <Max luma (x Nits)> <Min luma (0.000x Nits)> <Max Cll (x nits)> <Max Fall (x Nits)> \n", name);
 	printf("\n");
-	printf("        HDR metadata is in NITS\n");
+	printf("        HDR metadata is in NITS \n");
 	printf("\n");
 	printf("        EOTF \n");
-	printf("	  Traditional Gamma-SDR Luminance Range  = 0\n");
-	printf("	  raditional Gamma-HDR Luminance Range   = 1\n");
-	printf("	  SMPTE ST 2084    						 = 2\n");
-	printf("	  Hybrid Log-Gamma (HLG)   		 		 = 3\n");
-	printf("	  Reserved for future use				 = 4\n");
-	printf("	  Reserved for future use				 = 5\n");
+	printf("	  Traditional Gamma-SDR Luminance Range = 0\n");
+	printf("	  raditional Gamma-HDR Luminance Range  = 1\n");
+	printf("	  SMPTE ST 2084 			= 2\n");
+	printf("	  Hybrid Log-Gamma (HLG) 		= 3\n");
+	printf("	  Reserved for future use 		= 4\n");
+	printf("	  Reserved for future use 		= 5\n");
 	printf("\n");
 	printf("        hdr_primaries \n");
-	printf("	  Display Gamut Rec709        		 = 0\n");
-	printf("	  Display Gamut Rec2020      		 = 1\n");
-	printf("	  Display Gamut P3D65         		 = 2\n");
-	printf("	  Display Gamut P3DCI(Theater)		 = 3\n");
-	printf("	  Display Gamut P3D60(ACES Cinema)	 = 4\n");
+	printf("	  Display Gamut Rec709        		= 0\n");
+	printf("	  Display Gamut Rec2020      		= 1\n");
+	printf("	  Display Gamut P3D65         		= 2\n");
+	printf("	  Display Gamut P3DCI(Theater)		= 3\n");
+	printf("	  Display Gamut P3D60(ACES Cinema)	= 4\n");
 
 	printf("\n");
 	printf("Example:\n");
-	printf("  %s 0 2 300 4000 10000 1 ", name);
-	printf(" ==>  Sets HDR metadata to 0 eotf, 2 P3D65, 300 MaxFall, 4000 MaxCll, 10000 max lum, 1 min lum\n");
+	printf("  %s 0 2 10000 1 10000 250 ", name);
+	printf(" ==>  Sets HDR metadata to: 0 eotf, 2 P3D65, 10000 (max_luma), 1 (min_luma), 10000 (MaxCll), 250 (MaxFall), \n");
 	return 0;
 }
  
@@ -70,6 +70,20 @@ static uint8_t hdmi_infoframe_checksum(const uint8_t *ptr, size_t size)
 	return 256 - csum;
 }
 
+/* 
+ * Data Bytes 21 – 22 specify a value for the min_display_mastering_luminance. This value is coded as an
+ * zero and 0xC350 represents 1.0000
+ * unsigned 16-bit value in units of 0.0001 cd/m2, where 0x0001 represents 0.0001 cd/m2 and 0xFFFF
+ * represents 6.5535 cd/m2.
+ *
+ * Data Bytes 23 – 24 contain the Maximum Content Light Level (MaxCLL). This value is coded as an
+ * unsigned 16-bit value in units of 1 cd/m2, where 0x0001 represents 1 cd/m2 and 0xFFFF represents
+ * 65535 cd/m2.
+ *
+ * Data Bytes 25 – 26 contain the Maximum Frame-Average Light Level (MaxFALL). This value is coded as
+ * an unsigned 16-bit value in units of 1 cd/m2, where 0x0001 represents 1 cd/m2 and 0xFFFF represents
+ * 65535 cd/m2.
+*/
 int main(int argc, char **argv){
 
 	int head1=0x87;
