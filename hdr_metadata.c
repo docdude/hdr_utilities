@@ -31,12 +31,16 @@ static const DisplayChromacities DisplayChromacityList[] =
 
 int usage(const char* name)
 {
-	printf("%s  \n", name);
+	printf("\n");
 	printf("      %s <eotf> <hdr_primaries> <Max luma (x Nits)> <Min luma (0.000x Nits)> <Max Cll (x nits)> <Max Fall (x Nits)> \n", name);
 	printf("\n");
-	printf("        HDR metadata is in NITS \n");
+	printf("        HDR metadata is in nits = candella per square meter (cd/m^2)			 \n");
+	printf("	  Max Luma (1 - 65535)\n");
+	printf("	  Min Luma (1 - 65535) unsigned 16-bit value in units of 0.0001 cd/m^2, where 1 represents 0.0001 cd/m^2 and 0xFFFF represents 6.5535 cd/m^2\n");
+	printf("	  MaxCLL   (1 - 65535)\n");
+	printf("	  MaxFall  (1 - 65535)\n");
 	printf("\n");
-	printf("        EOTF \n");
+	printf("        <eotf>\n");
 	printf("	  Traditional Gamma-SDR Luminance Range = 0\n");
 	printf("	  raditional Gamma-HDR Luminance Range  = 1\n");
 	printf("	  SMPTE ST 2084 			= 2\n");
@@ -44,7 +48,7 @@ int usage(const char* name)
 	printf("	  Reserved for future use 		= 4\n");
 	printf("	  Reserved for future use 		= 5\n");
 	printf("\n");
-	printf("        hdr_primaries \n");
+	printf("        <hdr_primaries> \n");
 	printf("	  Display Gamut Rec709        		= 0\n");
 	printf("	  Display Gamut Rec2020      		= 1\n");
 	printf("	  Display Gamut P3D65         		= 2\n");
@@ -54,7 +58,7 @@ int usage(const char* name)
 	printf("\n");
 	printf("Example:\n");
 	printf("  %s 0 2 10000 1 10000 250 ", name);
-	printf(" ==>  Sets HDR metadata to: 0 eotf, 2 P3D65, 10000 (max_luma), 1 (min_luma), 10000 (MaxCll), 250 (MaxFall), \n");
+	printf(" ==>  Sets HDR metadata to: 2 <ST2084>, 2 <P3D65>, 10000 <Max Luma>, 1 <Min Luma>, 10000 <MaxCll>, 250 <MaxFall>, \n");
 	return 0;
 }
  
